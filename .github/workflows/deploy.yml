@@ -24,12 +24,12 @@ jobs:
           remote_user: ${{ secrets.EC2_USER }}
           remote_key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Start application with Docker Compose
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ec2-44-192-63-173.compute-1.amazonaws.com
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            chmod +x run_chatwoot.sh
-            ./run_chatwoot.sh
+      # - name: Start application with Docker Compose
+      #   uses: appleboy/ssh-action@v1.2.0
+      #   with:
+      #     host: ec2-44-192-63-173.compute-1.amazonaws.com
+      #     username: ${{ secrets.EC2_USER }}
+      #     key: ${{ secrets.EC2_SSH_KEY }}
+      #     script: |
+      #       chmod +x run_chatwoot.sh
+      #       ./run_chatwoot.sh
