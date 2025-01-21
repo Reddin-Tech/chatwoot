@@ -14,7 +14,7 @@ services:
   rails:
     <<: *base
     depends_on:
-      - postgres
+      # - postgres
       - redis
     ports:
       - '127.0.0.1:3000:3000'
@@ -30,7 +30,7 @@ services:
   sidekiq:
     <<: *base
     depends_on:
-      - postgres
+      # - postgres
       - redis
     environment:
       - NODE_ENV=production
