@@ -3,13 +3,13 @@ GlobalConfig.clear_cache
 ConfigLoader.new.process
 
 ## Seeds productions
-if Rails.env.production?
+if Rails.env.development?
   # Setup Onboarding flow
-  Redis::Alfred.set(Redis::Alfred::CHATWOOT_INSTALLATION_ONBOARDING, true)
+  Redis::Alfred.set(Redis::Alfred::CHATWOOT_INSTALLATION_ONBOARDING, false)
 end
 
 ## Seeds for Local Development
-unless Rails.env.production?
+unless Rails.env.development?
 
   # Enables creating additional accounts from dashboard
   installation_config = InstallationConfig.find_by(name: 'CREATE_NEW_ACCOUNT_FROM_DASHBOARD')
