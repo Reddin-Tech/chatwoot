@@ -1,0 +1,3 @@
+setup:
+  - project: chatwoot
+    config: prd
