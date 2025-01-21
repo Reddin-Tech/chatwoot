@@ -39,17 +39,17 @@ services:
     command: [ 'bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml' ]
     restart: always
 
-  postgres:
-    image: pgvector/pgvector:pg16
-    restart: always
-    ports:
-      - '127.0.0.1:5432:5432'
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+  # postgres:
+  #   image: pgvector/pgvector:pg16
+  #   restart: always
+  #   ports:
+  #     - '127.0.0.1:5432:5432'
+  #   volumes:
+  #     - ./postgres-data:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_DB=chatwoot
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
 
   redis:
     image: redis:alpine
@@ -57,6 +57,9 @@ services:
     command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
     env_file: .env
     volumes:
-      - ./redis-data:/data
+      - redis-data:/data
     ports:
       - '127.0.0.1:6379:6379'
+
+volumes:
+  redis-data:
