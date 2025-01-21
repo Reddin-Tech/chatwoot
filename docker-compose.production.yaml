@@ -2,7 +2,7 @@ version: '3'
 
 services:
   base: &base
-    image: 881490098858.dkr.ecr.us-east-1.amazonaws.com/chatwoot:1.0.0
+    image: 881490098858.dkr.ecr.us-east-1.amazonaws.com/chatwoot-base:1.0.0
     env_file: .env
     volumes:
       - ./storage:/app/storage
