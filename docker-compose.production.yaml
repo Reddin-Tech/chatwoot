@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  base: &base
+    image: 881490098858.dkr.ecr.us-east-1.amazonaws.com/chatwoot-base:1.0.0
+    env_file: .env
+    volumes:
+      - ./storage:/app/storage
+
+  rails:
+    <<: *base
+    depends_on:
+      # - postgres
+      - redis
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+      - POSTGRES_DATABASE=chatwoot_production
+    entrypoint: docker/entrypoints/rails.sh
+    command: [ 'bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0' ]
+    restart: always
+
+  sidekiq:
+    <<: *base
+    depends_on:
+      # - postgres
+      - redis
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+      - INSTALLATION_ENV=docker
+    command: [ 'bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml' ]
+    restart: always
+
+  # postgres:
+  #   image: pgvector/pgvector:pg16
+  #   restart: always
+  #   ports:
+  #     - '127.0.0.1:5432:5432'
+  #   volumes:
+  #     - ./postgres-data:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_DB=chatwoot
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:alpine
+    restart: always
+    command: [ "sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\"" ]
+    env_file: .env
+    volumes:
+      - redis-data:/data
+    ports:
+      - '127.0.0.1:6379:6379'
+
+volumes:
+  redis-data:
