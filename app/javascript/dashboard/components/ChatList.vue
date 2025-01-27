@@ -25,6 +25,7 @@ import ChatListHeader from './ChatListHeader.vue';
 import ConversationFilter from 'next/filter/ConversationFilter.vue';
 import SaveCustomView from 'next/filter/SaveCustomView.vue';
 import ChatTypeTabs from './widgets/ChatTypeTabs.vue';
+import ChatStatusTabs from './widgets/ChatStatusTabs.vue';
 import ConversationItem from './ConversationItem.vue';
 import DeleteCustomViews from 'dashboard/routes/dashboard/customviews/DeleteCustomViews.vue';
 import ConversationBulkActions from './widgets/conversation/conversationBulkActions/Index.vue';
@@ -85,7 +86,7 @@ const store = useStore();
 const conversationListRef = ref(null);
 const conversationDynamicScroller = ref(null);
 
-const activeAssigneeTab = ref(wootConstants.ASSIGNEE_TYPE.ME);
+const activeAssigneeTab = ref(wootConstants.ASSIGNEE_TYPE.ALL);
 const activeStatus = ref(wootConstants.STATUS_TYPE.OPEN);
 const activeSortBy = ref(wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC);
 const showAdvancedFilters = ref(false);
@@ -348,15 +349,37 @@ const uniqueInboxes = computed(() => {
   return [...new Set(selectedInboxes.value)];
 });
 
+const statusTabItems = computed(() => {
+  return [
+    {
+      key: wootConstants.STATUS_TYPE.OPEN,
+      name: t('CHAT_LIST.CHAT_STATUS_FILTER_ITEMS.open.TEXT'),
+    },
+    {
+      key: wootConstants.STATUS_TYPE.PENDING,
+      name: t('CHAT_LIST.CHAT_STATUS_FILTER_ITEMS.pending.TEXT'),
+    },
+    {
+      key: wootConstants.STATUS_TYPE.SNOOZED,
+      name: t('CHAT_LIST.CHAT_STATUS_FILTER_ITEMS.snoozed.TEXT'),
+    },
+    {
+      key: wootConstants.STATUS_TYPE.RESOLVED,
+      name: t('CHAT_LIST.CHAT_STATUS_FILTER_ITEMS.resolved.TEXT'),
+    },
+  ];
+});
+
 // ---------------------- Methods -----------------------
 function setFiltersFromUISettings() {
   const { conversations_filter_by: filterBy = {} } = uiSettings.value;
-  const { status, order_by: orderBy } = filterBy;
+  const { status, order_by: orderBy, assignee_type } = filterBy;
   activeStatus.value = status || wootConstants.STATUS_TYPE.OPEN;
   activeSortBy.value =
     Object.keys(wootConstants.SORT_BY_TYPE).find(
       sortField => sortField === orderBy
     ) || wootConstants.SORT_BY_TYPE.LAST_ACTIVITY_AT_DESC;
+  activeAssigneeTab.value = assignee_type || wootConstants.ASSIGNEE_TYPE.ALL;
 }
 
 function emitConversationLoaded() {
@@ -719,6 +742,15 @@ function toggleSelectAll(check) {
   selectAllConversations(check, conversationList);
 }
 
+function updateStatusTab(selectedTab) {
+  if (activeStatus.value !== selectedTab) {
+    resetBulkActions();
+    emitter.emit('clearSearchInput');
+    activeStatus.value = selectedTab;
+    resetAndFetchData();
+  }
+}
+
 useEmitter('fetch_conversation_stats', () => {
   store.dispatch('conversationStats/get', conversationFilters.value);
 });
@@ -736,7 +768,19 @@ onMounted(() => {
   }
 });
 
-provide('selectConversation', selectConversation);
+provide('selectConversation', async conversation => {
+  if (
+    conversation.status !== wootConstants.STATUS_TYPE.RESOLVED &&
+    !conversation.meta.assignee
+  ) {
+    await store.dispatch('assignAgent', {
+      conversationId: conversation.id,
+      agentId: currentUser.value.id,
+    });
+  }
+  selectConversation(conversation);
+});
+
 provide('deSelectConversation', deSelectConversation);
 provide('assignAgent', onAssignAgent);
 provide('assignTeam', onAssignTeam);
@@ -802,6 +846,22 @@ watch(conversationFilters, (newVal, oldVal) => {
       @basic-filter-change="onBasicFilterChange"
     />
 
+    <ChatStatusTabs
+      v-if="!hasAppliedFiltersOrActiveFolders"
+      :items="statusTabItems"
+      :active-tab="activeStatus"
+      is-compact
+      @status-tab-change="updateStatusTab"
+    />
+
+    <ChatTypeTabs
+      v-if="!hasAppliedFiltersOrActiveFolders"
+      :items="assigneeTabItems"
+      :active-tab="activeAssigneeTab"
+      is-compact
+      @chat-tab-change="updateAssigneeTab"
+    />
+
     <Teleport v-if="showAddFoldersModal" to="#saveFilterTeleportTarget">
       <SaveCustomView
         v-model="appliedFilter"
@@ -818,14 +878,6 @@ watch(conversationFilters, (newVal, oldVal) => {
       :custom-views-id="foldersId"
       :open-last-item-after-delete="openLastItemAfterDeleteInFolder"
       @close="onCloseDeleteFoldersModal"
-    />
-
-    <ChatTypeTabs
-      v-if="!hasAppliedFiltersOrActiveFolders"
-      :items="assigneeTabItems"
-      :active-tab="activeAssigneeTab"
-      is-compact
-      @chat-tab-change="updateAssigneeTab"
     />
 
     <p

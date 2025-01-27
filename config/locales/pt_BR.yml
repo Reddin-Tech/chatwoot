@@ -62,6 +62,7 @@ pt_BR:
         connection_closed_error: Conexão fechada.
       validations:
         name: 'não deve iniciar ou terminar com símbolos e não deve ter os caracteres: < > / \ @.'
+        duplicate_name: Uma caixa de entrada com este nome já existe
     custom_filters:
       number_of_records: Limite atingido. O número máximo de filtros personalizados permitidos para um usuário por conta é de 50.
       invalid_attribute: Chave de atributo inválido - [%{key}]. A chave deve ser uma das [%{allowed_keys}] ou um atributo personalizado definido na conta.
@@ -274,3 +275,13 @@ pt_BR:
     seconds:
       one: "%{count} segundo"
       other: "%{count} segundos"
+  SETTINGS:
+    INBOXES:
+      ADD:
+        CONFIGURING: "Configurando sua caixa de entrada..."
+  CHAT_LIST:
+    STATUS_TYPE:
+      OPEN: 'Aberta'
+      PENDING: 'Pendente'
+      SNOOZED: 'Adiada'
+      RESOLVED: 'Resolvida'

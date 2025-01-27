@@ -6,6 +6,12 @@ class Inboxes extends CacheEnabledApiClient {
     super('inboxes', { accountScoped: true });
   }
 
+  get(validateHash = false) {
+    return super.get('', {
+      validateHash,
+    });
+  }
+
   // eslint-disable-next-line class-methods-use-this
   get cacheModelName() {
     return 'inbox';
@@ -26,6 +32,13 @@ class Inboxes extends CacheEnabledApiClient {
   setAgentBot(inboxId, botId) {
     return axios.post(`${this.url}/${inboxId}/set_agent_bot`, {
       agent_bot: botId,
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createEvolutionInstance({ name, accountId }) {
+    return axios.post(`/api/v1/accounts/${accountId}/inboxes/evolution`, {
+      name,
     });
   }
 }

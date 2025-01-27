@@ -11,6 +11,17 @@
         "NAME": "Conversas",
         "DESC": "( Total )"
       },
+      "STATUS": {
+        "OPEN": "Novas",
+        "RESOLVED": "Finalizadas",
+        "PENDING": "Atendimento",
+        "SNOOZED": "Arquivadas"
+      },
+      "ASSIGNMENT": {
+        "UNASSIGNED": "Geral",
+        "MINE": "Minhas",
+        "ALL": "Todas"
+      },
       "INCOMING_MESSAGES": {
         "NAME": "Mensagens Recebidas",
         "DESC": "( Total )"
@@ -190,10 +201,10 @@
     }
   },
   "LABEL_REPORTS": {
-    "HEADER": "Visão Geral dos Marcadores",
+    "HEADER": "Visão Geral das Etiquetas",
     "LOADING_CHART": "Carregando dados do gráfico...",
     "NO_ENOUGH_DATA": "Não existem dados suficientes para gerar o relatório. Tente novamente mais tarde.",
-    "DOWNLOAD_LABEL_REPORTS": "Baixar relatórios de marcadores",
+    "DOWNLOAD_LABEL_REPORTS": "Baixar relatórios de etiquetas",
     "FILTER_DROPDOWN_LABEL": "Selecionar etiqueta",
     "METRICS": {
       "CONVERSATIONS": {
@@ -328,7 +339,7 @@
     "LOADING_CHART": "Carregando dados do gráfico...",
     "NO_ENOUGH_DATA": "Não existem dados suficientes para gerar o relatório. Tente novamente mais tarde.",
     "DOWNLOAD_TEAM_REPORTS": "Baixar relatórios da equipe",
-    "FILTER_DROPDOWN_LABEL": "Selecionar time",
+    "FILTER_DROPDOWN_LABEL": "Selecionar equipe",
     "METRICS": {
       "CONVERSATIONS": {
         "NAME": "Conversas",
@@ -513,7 +524,7 @@
       "INBOXES": "Caixa de Entrada",
       "AGENTS": "Agente",
       "LABELS": "Nome do campo",
-      "TEAMS": "Times"
+      "TEAMS": "Equipes"
     },
     "WITH": "com",
     "METRICS": {

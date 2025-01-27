@@ -51,15 +51,15 @@
     },
     "DISPLAY_MENU": {
       "SORT": "Ordenar",
-      "DISPLAY": "Exibir :",
+      "DISPLAY": "Exibir:",
       "SORT_OPTIONS": {
-        "NEWEST": "Mais recente",
+        "NEWEST": "Mais novo",
         "OLDEST": "Mais antigo",
         "PRIORITY": "Prioridade"
       },
       "DISPLAY_OPTIONS": {
-        "SNOOZED": "Adiado",
-        "READ": "Lida",
+        "SNOOZED": "Adiadas",
+        "READ": "Lidas",
         "LABELS": "Marcadores",
         "CONVERSATION_ID": "Conversas"
       }

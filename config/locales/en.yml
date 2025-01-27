@@ -76,6 +76,7 @@ en:
         connection_closed_error: Connection closed.
       validations:
         name: should not start or end with symbols, and it should not have < > / \ @ characters.
+        duplicate_name: An inbox with this name already exists
     custom_filters:
       number_of_records: Limit reached. The maximum number of allowed custom filters for a user per account is 50.
       invalid_attribute: Invalid attribute key - [%{key}]. The key should be one of [%{allowed_keys}] or a custom attribute defined in the account.

@@ -1,10 +1,10 @@
-Chatwoot is looking forward to working with security researchers worldwide to keep Chatwoot and our users safe. If you have found an issue in our systems/applications, please reach out to us.
+SECURITY.mdChatwoot is looking forward to working with security researchers worldwide to keep Chatwoot and our users safe. If you have found an issue in our systems/applications, please reach out to us.
 
 ## Reporting a Vulnerability
 
 We use Github to track the security issues that affect our project. If you believe you have found a vulnerability, please disclose it via this [form](https://github.com/chatwoot/chatwoot/security/advisories/new). This will enable us to review the vulnerability, fix it promptly, and reward you for your efforts.
 
-If you have any questions about the process, contact security@chatwoot.com. 
+If you have any questions about the process, contact security@chatwoot.com.
 
 Please try your best to describe a clear and realistic impact for your report, and please don't open any public issues on GitHub or social media; we're doing our best to respond through Github as quickly as possible.
 
