@@ -3,6 +3,7 @@ import PageHeader from '../../SettingsSubPageHeader.vue';
 import Twilio from './Twilio.vue';
 import ThreeSixtyDialogWhatsapp from './360DialogWhatsapp.vue';
 import CloudWhatsapp from './CloudWhatsapp.vue';
+import WhatsAppWeb from './WhatsAppWeb.vue';
 
 export default {
   components: {
@@ -10,10 +11,11 @@ export default {
     Twilio,
     ThreeSixtyDialogWhatsapp,
     CloudWhatsapp,
+    WhatsAppWeb,
   },
   data() {
     return {
-      provider: 'whatsapp_cloud',
+      provider: 'whatsapp_web',
     };
   },
 };
@@ -34,6 +36,9 @@ export default {
           <option value="whatsapp_cloud">
             {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WHATSAPP_CLOUD') }}
           </option>
+          <option value="whatsapp_web">
+            {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WHATSAPP_WEB') }}
+          </option>
           <option value="twilio">
             {{ $t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.TWILIO') }}
           </option>
@@ -43,6 +48,7 @@ export default {
 
     <Twilio v-if="provider === 'twilio'" type="whatsapp" />
     <ThreeSixtyDialogWhatsapp v-else-if="provider === '360dialog'" />
+    <WhatsAppWeb v-else-if="provider === 'whatsapp_web'" />
     <CloudWhatsapp v-else />
   </div>
 </template>

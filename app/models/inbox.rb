@@ -43,6 +43,7 @@ class Inbox < ApplicationRecord
   include Avatarable
   include OutOfOffisable
   include AccountCacheRevalidator
+  include EvolutionSyncable
 
   # Not allowing characters:
   validates :name, presence: true
@@ -53,6 +54,7 @@ class Inbox < ApplicationRecord
   validates :out_of_office_message, length: { maximum: Limits::OUT_OF_OFFICE_MESSAGE_MAX_LENGTH }
   validates :greeting_message, length: { maximum: Limits::GREETING_MESSAGE_MAX_LENGTH }
   validate :ensure_valid_max_assignment_limit
+  validate :validate_name_uniqueness
 
   belongs_to :account
   belongs_to :portal, optional: true
@@ -81,6 +83,8 @@ class Inbox < ApplicationRecord
   after_update_commit :dispatch_update_event
 
   scope :order_by_name, -> { order('lower(name) ASC') }
+
+  before_validation :ensure_valid_name
 
   def add_member(user_id)
     member = inbox_members.new(user_id: user_id)
@@ -185,6 +189,21 @@ class Inbox < ApplicationRecord
 
   def check_channel_type?
     ['Channel::Email', 'Channel::Api', 'Channel::WebWidget'].include?(channel_type)
+  end
+
+  def ensure_valid_name
+    return if name.present?
+    return unless channel.present?
+
+    self.name = channel.name
+  end
+
+  def validate_name_uniqueness
+    return unless account
+
+    if account.inboxes.where(name: name).where.not(id: id).exists?
+      errors.add(:name, I18n.t('errors.inboxes.validations.duplicate_name'))
+    end
   end
 end
 

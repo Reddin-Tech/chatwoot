@@ -40,18 +40,21 @@ module SwitchLocale
   end
 
   def locale_from_params
-    I18n.available_locales.map(&:to_s).include?(params[:locale]) ? params[:locale] : nil
+    locale = params[:locale]&.to_sym
+    I18n.available_locales.include?(locale) ? locale : nil
   end
 
   def locale_from_account(account)
     return unless account
 
-    I18n.available_locales.map(&:to_s).include?(account.locale) ? account.locale : nil
+    locale = account.locale&.to_sym
+    I18n.available_locales.include?(locale) ? locale : nil
   end
 
   def locale_from_env_variable
     return unless ENV.fetch('DEFAULT_LOCALE', nil)
 
-    I18n.available_locales.map(&:to_s).include?(ENV.fetch('DEFAULT_LOCALE')) ? ENV.fetch('DEFAULT_LOCALE') : nil
+    locale = ENV.fetch('DEFAULT_LOCALE')&.to_sym
+    I18n.available_locales.include?(locale) ? locale : nil
   end
 end

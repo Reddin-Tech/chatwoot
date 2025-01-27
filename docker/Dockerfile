@@ -40,7 +40,7 @@ RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which 
 
 # Persist the environment variables in Docker
 ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="/root/.local/share/pnpm:${PATH}"
 
 WORKDIR /app
 
@@ -118,9 +118,17 @@ RUN if [ "$RAILS_ENV" != "production" ]; then \
   apk add --no-cache nodejs=20.15.1-r0; \
   # Install pnpm and configure environment
   wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh - \
+  && echo 'export PNPM_HOME="/root/.local/share/pnpm"' >> /root/.shrc \
+  && echo 'export PATH="$PNPM_HOME:$PATH"' >> /root/.shrc \
+  && export PNPM_HOME="/root/.local/share/pnpm" \
+  && export PATH="$PNPM_HOME:$PATH" \
   && source /root/.shrc \
   && pnpm --version; \
   fi
+
+# Persist the environment variables in Docker for the final stage
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="/root/.local/share/pnpm:${PATH}"
 
 COPY --from=pre-builder /gems/ /gems/
 COPY --from=pre-builder /app /app

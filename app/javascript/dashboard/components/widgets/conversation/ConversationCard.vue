@@ -154,7 +154,7 @@ export default {
     },
   },
   methods: {
-    onCardClick(e) {
+    async onCardClick(e) {
       const { activeInbox, chat } = this;
       const path = frontendURL(
         conversationUrl({
@@ -178,6 +178,17 @@ export default {
       }
       if (this.isActiveChat) {
         return;
+      }
+
+      if (!chat.meta.assignee && chat.status !== 'resolved') {
+        try {
+          await this.$store.dispatch('assignAgent', {
+            conversationId: chat.id,
+            agentId: this.$store.getters.getCurrentUser.id,
+          });
+        } catch (error) {
+          // Ignora erro de atribuição e continua navegação
+        }
       }
 
       router.push({ path });

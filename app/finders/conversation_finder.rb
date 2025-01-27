@@ -99,6 +99,32 @@ class ConversationFinder
       @conversations = @conversations.unassigned
     when 'assigned'
       @conversations = @conversations.assigned
+    when 'all'
+      if current_user.administrator?
+        return @conversations
+      else
+        # Para agentes com permissões específicas, 'all' significa conversas não atribuídas + participando
+        unassigned_permission = current_user.role.permissions.include?('conversation_unassigned_manage')
+        participating_permission = current_user.role.permissions.include?('conversation_participating_manage')
+        
+        if unassigned_permission && participating_permission
+          @conversations = @conversations.where(
+            'conversations.assignee_id IS NULL OR conversations.assignee_id = ? OR conversations.id IN (?)',
+            current_user.id,
+            current_user.participating_conversations.select(:id)
+          )
+        elsif unassigned_permission
+          @conversations = @conversations.where('conversations.assignee_id IS NULL')
+        elsif participating_permission
+          @conversations = @conversations.where(
+            'conversations.assignee_id = ? OR conversations.id IN (?)',
+            current_user.id,
+            current_user.participating_conversations.select(:id)
+          )
+        else
+          @conversations = @conversations.where(assignee_id: current_user.id)
+        end
+      end
     end
     @conversations
   end
