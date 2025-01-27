@@ -2,20 +2,16 @@
 GlobalConfig.clear_cache
 ConfigLoader.new.process
 
-## Seeds productions
-if Rails.env.development?
-  # Setup Onboarding flow
-  Redis::Alfred.set(Redis::Alfred::CHATWOOT_INSTALLATION_ONBOARDING, false)
-end
-
 ## Seeds for Local Development
-unless Rails.env.development?
-
+if Rails.env.development?
   # Enables creating additional accounts from dashboard
   installation_config = InstallationConfig.find_by(name: 'CREATE_NEW_ACCOUNT_FROM_DASHBOARD')
   installation_config.value = true
   installation_config.save!
   GlobalConfig.clear_cache
+
+  # Setup Onboarding flow
+  Redis::Alfred.set(Redis::Alfred::CHATWOOT_INSTALLATION_ONBOARDING, false)
 
   account = Account.create!(
     name: 'Acme Inc'
@@ -94,4 +90,9 @@ unless Rails.env.development?
   Seeders::MessageSeeder.create_sample_csat_collect_message conversation
 
   CannedResponse.create!(account: account, short_code: 'start', content: 'Hello welcome to chatwoot.')
+end
+
+## Seeds for Production
+unless Rails.env.development?
+  # Production specific seeds can go here
 end

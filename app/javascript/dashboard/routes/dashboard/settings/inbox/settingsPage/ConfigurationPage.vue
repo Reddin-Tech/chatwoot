@@ -40,6 +40,11 @@ export default {
   mounted() {
     this.setDefaults();
   },
+  computed: {
+    isWebhookChatwoot() {
+      return this.inbox?.webhook_url?.includes('chatwoot');
+    },
+  },
   methods: {
     setDefaults() {
       this.hmacMandatory = this.inbox.hmac_mandatory || false;
@@ -105,6 +110,7 @@ export default {
   <div v-else-if="isAWebWidgetInbox">
     <div class="mx-8">
       <SettingsSection
+        v-if="!isWebhookChatwoot"
         :title="$t('INBOX_MGMT.SETTINGS_POPUP.MESSENGER_HEADING')"
         :sub-title="$t('INBOX_MGMT.SETTINGS_POPUP.MESSENGER_SUB_HEAD')"
       >
@@ -117,6 +123,7 @@ export default {
       </SettingsSection>
 
       <SettingsSection
+        v-if="!isWebhookChatwoot"
         :title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_VERIFICATION')"
       >
         <woot-code :script="inbox.hmac_token" />
@@ -132,6 +139,7 @@ export default {
         </template>
       </SettingsSection>
       <SettingsSection
+        v-if="!isWebhookChatwoot"
         :title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_MANDATORY_VERIFICATION')"
         :sub-title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_MANDATORY_DESCRIPTION')"
       >
@@ -151,6 +159,7 @@ export default {
   </div>
   <div v-else-if="isAPIInbox" class="mx-8">
     <SettingsSection
+      v-if="!isWebhookChatwoot"
       :title="$t('INBOX_MGMT.SETTINGS_POPUP.INBOX_IDENTIFIER')"
       :sub-title="$t('INBOX_MGMT.SETTINGS_POPUP.INBOX_IDENTIFIER_SUB_TEXT')"
     >
@@ -158,12 +167,14 @@ export default {
     </SettingsSection>
 
     <SettingsSection
+      v-if="!isWebhookChatwoot"
       :title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_VERIFICATION')"
       :sub-title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_DESCRIPTION')"
     >
       <woot-code :script="inbox.hmac_token" />
     </SettingsSection>
     <SettingsSection
+      v-if="!isWebhookChatwoot"
       :title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_MANDATORY_VERIFICATION')"
       :sub-title="$t('INBOX_MGMT.SETTINGS_POPUP.HMAC_MANDATORY_DESCRIPTION')"
     >

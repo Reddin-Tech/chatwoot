@@ -12,7 +12,8 @@ module ChatwootApp
   end
 
   def self.enterprise?
-    return if ENV.fetch('DISABLE_ENTERPRISE', false)
+    disable_enterprise = ENV.fetch('DISABLE_ENTERPRISE', 'false')
+    return false if disable_enterprise.to_s.downcase == 'true'
 
     @enterprise ||= root.join('enterprise').exist?
   end

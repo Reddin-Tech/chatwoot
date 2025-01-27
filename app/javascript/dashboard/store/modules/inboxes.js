@@ -9,6 +9,7 @@ import { throwErrorMessage } from '../utils/api';
 import AnalyticsHelper from '../../helper/AnalyticsHelper';
 import camelcaseKeys from 'camelcase-keys';
 import { ACCOUNT_EVENTS } from '../../helper/AnalyticsHelper/events';
+import axios from 'axios';
 
 const buildInboxData = inboxParams => {
   const formData = new FormData();
@@ -142,14 +143,16 @@ export const actions = {
       // Ignore error
     }
   },
-  get: async ({ commit }) => {
+  get: async ({ commit }, { validateHash = true } = {}) => {
     commit(types.default.SET_INBOXES_UI_FLAG, { isFetching: true });
     try {
-      const response = await InboxesAPI.get(true);
+      const response = await InboxesAPI.get(validateHash);
       commit(types.default.SET_INBOXES_UI_FLAG, { isFetching: false });
       commit(types.default.SET_INBOXES, response.data.payload);
+      return response.data;
     } catch (error) {
       commit(types.default.SET_INBOXES_UI_FLAG, { isFetching: false });
+      throw new Error(error);
     }
   },
   createChannel: async ({ commit }, params) => {
@@ -267,6 +270,55 @@ export const actions = {
     } catch (error) {
       throw new Error(error);
     }
+  },
+  createEvolutionInstance: async ({ commit }, { name, accountId }) => {
+    try {
+      commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: true });
+      const response = await InboxesAPI.createEvolutionInstance({ name, accountId });
+      commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
+      return response;
+    } catch (error) {
+      commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
+      throw error;
+    }
+  },
+  pollForInbox: async ({ dispatch, getters }, { maxAttempts = 3, interval = 2000 }) => {
+    let attempts = 0;
+    
+    const findInbox = (inboxes) => {
+      // Ordena por data de criação decrescente e pega a primeira caixa do tipo correspondente
+      const sortedInboxes = [...inboxes].sort((a, b) => {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+      
+      return sortedInboxes.find(inbox => {
+        const channelType = inbox.channel_type?.toLowerCase();
+        return (
+          channelType === 'channel::evolution' ||
+          channelType === 'evolution' ||
+          channelType === 'channel::api' ||
+          channelType === 'api' ||
+          channelType === 'channel::whatsapp' ||
+          channelType === 'whatsapp'
+        );
+      });
+    };
+
+    while (attempts < maxAttempts) {
+      // Forçar atualização da lista
+      await dispatch('get', { validateHash: false });
+      const inboxes = getters.getInboxes;
+      
+      const foundInbox = findInbox(inboxes);
+      if (foundInbox) {
+        return foundInbox;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, interval));
+      attempts++;
+    }
+
+    return null;
   },
 };
 

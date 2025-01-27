@@ -9,7 +9,7 @@
       "FILTER": "Filtrar por",
       "SORT": "Ordenar por",
       "LOCALE": "Localidade",
-      "SETTINGS_BUTTON": "Confirgurações",
+      "SETTINGS_BUTTON": "Configurações",
       "NEW_BUTTON": "Novo artigo",
       "DROPDOWN_OPTIONS": {
         "PUBLISHED": "Publicado",
@@ -18,7 +18,7 @@
       },
       "TITLES": {
         "ALL_ARTICLES": "Todos os artigos",
-        "MINE": "Meus Artigos",
+        "MINE": "Minhas",
         "DRAFT": "Artigos em rascunho",
         "ARCHIVED": "Artigos arquivados"
       },
@@ -121,7 +121,7 @@
             "COUNT_LABEL": "artigos",
             "ADD": "Adicionar localidade",
             "VISIT": "Visitar site",
-            "SETTINGS": "Confirgurações",
+            "SETTINGS": "Configurações",
             "DELETE": "Excluir"
           },
           "PORTAL_CONFIG": {
@@ -385,7 +385,7 @@
         "NAME": {
           "LABEL": "Nome",
           "PLACEHOLDER": "Nome da categoria",
-          "HELP_TEXT": "O nome da categoria e o ícone serão usados no portal público para categorizar os artigos.",
+          "HELP_TEXT": "O nome da categoria será usado no portal público para categorizar os artigos.",
           "ERROR": "O nome é obrigatório"
         },
         "SLUG": {
@@ -528,7 +528,7 @@
       "EMPTY_STATE": {
         "ALL": {
           "TITLE": "Escreva um artigo",
-          "SUBTITLE": "Write a rich article, let’s get started!",
+          "SUBTITLE": "Write a rich article, let's get started!",
           "BUTTON_LABEL": "New article"
         },
         "MINE": {

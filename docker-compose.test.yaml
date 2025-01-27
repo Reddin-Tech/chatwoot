@@ -6,61 +6,95 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile
       args:
-        BUNDLE_WITHOUT: 'development:test'
-        EXECJS_RUNTIME: Disabled
-        RAILS_ENV: 'production'
-        RAILS_SERVE_STATIC_FILES: 'true'
-    image: chatwoot:latest
-    env_file: .env ## Change this file for customized env variables
+        BUNDLE_WITHOUT: ''
+        EXECJS_RUNTIME: 'Node'
+        RAILS_ENV: 'development'
+        RAILS_SERVE_STATIC_FILES: 'false'
+    tty: true
+    stdin_open: true
+    env_file: .env
+    networks:
+      - shared_network
+    
 
   rails:
     <<: *base
     image: chatwoot:latest
-    depends_on:
-      - postgres
-      - redis
+    volumes:
+      - ./:/app:delegated
+      - node_modules:/app/node_modules
+      - packs:/app/public/packs
+      - cache:/app/tmp/cache
+      - bundle:/usr/local/bundle
+#    depends_on:
+#      - postgres
+#      - redis
     ports:
       - 3000:3000
     environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
+      - NODE_ENV=development
+      - RAILS_ENV=development
     entrypoint: docker/entrypoints/rails.sh
-    command: ['bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0']
+    command: [ 'bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0' ]
+
+  vite:
+    <<: *base
+    image: chatwoot:latest
+    volumes:
+      - ./:/app:delegated
+      - node_modules:/app/node_modules
+      - packs:/app/public/packs
+    ports:
+      - 3036:3036
+    environment:
+      - NODE_ENV=development
+      - RAILS_ENV=development
+    command: [ 'bin/vite', 'dev' ]
+    networks:
+      - shared_network
 
   sidekiq:
     <<: *base
     image: chatwoot:latest
-    depends_on:
-      - postgres
-      - redis
+#    depends_on:
+#      - postgres
+#      - redis
     environment:
-      - NODE_ENV=production
-      - RAILS_ENV=production
-    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+      - NODE_ENV=development
+      - RAILS_ENV=development
+    command: [ 'bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml' ]
+    networks:
+      - shared_network
 
-  postgres:
-    image: pgvector/pgvector:pg16
-    restart: always
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres:/data/postgres
-    environment:
-      - POSTGRES_DB=chatwoot
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
+ # postgres:
+ #   image: pgvector/pgvector:pg16
+ #   restart: always
+ #   ports:
+ #     - '5432:5432'
+ #   volumes:
+ #     - postgres:/data/postgres
+ #   environment:
+ #     - POSTGRES_DB=chatwoot
+ #     - POSTGRES_USER=postgres
+ #     - POSTGRES_PASSWORD=postgres
 
-  redis:
-    image: redis:alpine
-    restart: always
-    volumes:
-      - redis:/data/redis
-    ports:
-      - '6379:6379'
+#  redis:
+#    image: redis:alpine
+#    restart: always
+#    volumes:
+#      - redis:/data/redis
+#    ports:
+#      - '6379:6379'
 
 volumes:
-  postgres:
-  redis:
+  #postgres:
+  #redis:
   bundle:
   packs:
-  node_modules_rails:
+  node_modules:
+  cache:
+
+networks:
+  shared_network:
+    external: true
+    name: shared_network

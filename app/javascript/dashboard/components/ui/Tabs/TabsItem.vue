@@ -47,7 +47,7 @@ const onTabClick = event => {
   >
     <a @click="onTabClick">
       {{ name }}
-      <div v-if="showBadge" class="badge min-w-[20px]">
+      <div v-if="showBadge && getItemCount > 0" class="badge min-w-[20px]">
         <span>
           {{ getItemCount }}
         </span>

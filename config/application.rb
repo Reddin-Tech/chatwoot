@@ -12,6 +12,10 @@ Bundler.require(*Rails.groups)
 # We rely on DOTENV to load the environment variables
 # We need these environment variables to load the specific APM agent
 Dotenv::Rails.load
+
+# Carrega o módulo Enterprise primeiro
+require_relative '../enterprise/lib/enterprise' if File.exist?(File.expand_path('../enterprise/lib/enterprise.rb', __dir__))
+
 require 'ddtrace' if ENV.fetch('DD_TRACE_AGENT_URL', false).present?
 require 'elastic-apm' if ENV.fetch('ELASTIC_APM_SECRET_TOKEN', false).present?
 require 'scout_apm' if ENV.fetch('SCOUT_KEY', false).present?

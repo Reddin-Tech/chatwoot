@@ -32,11 +32,11 @@
 - name: BRAND_URL
   value: 'https://www.chatwoot.com'
   display_title: 'Brand URL'
-  description: 'The URL that would be used in emails under the section “Powered By”'
+  description: 'The URL that would be used in emails under the section "Powered By"'
 - name: WIDGET_BRAND_URL
   value: 'https://www.chatwoot.com'
   display_title: 'Widget Brand URL'
-  description: 'The URL that would be used in the widget under the section “Powered By”'
+  description: 'The URL that would be used in the widget under the section "Powered By"'
 - name: BRAND_NAME
   value: 'Chatwoot'
   display_title: 'Brand Name'
@@ -64,7 +64,7 @@
   locked: false
   type: boolean
 - name: CREATE_NEW_ACCOUNT_FROM_DASHBOARD
-  value: false
+  value: true
   description: 'Allow users to create new accounts from the dashboard'
   locked: false
 - name: HCAPTCHA_SITE_KEY
@@ -184,7 +184,7 @@
 
 # ------- Chatwoot Internal Config for Self Hosted ----#
 - name: INSTALLATION_PRICING_PLAN
-  value: 'community'
+  value: 'enterprise'
   description: 'The pricing plan for the installation, retrieved from the billing API'
 - name: INSTALLATION_PRICING_PLAN_QUANTITY
   value: 0
