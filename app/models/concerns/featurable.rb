@@ -6,7 +6,31 @@ module Featurable
     check_for_column: false
   }.freeze
 
-  FEATURE_LIST = YAML.safe_load(Rails.root.join('config/features.yml').read).freeze
+  # Carrega features base e enterprise
+  FEATURE_LIST = begin
+    base_features = YAML.safe_load(Rails.root.join('config/features.yml').read)
+    
+    # Se o modo enterprise estiver habilitado, carrega e combina as features enterprise
+    if ChatwootApp.enterprise?
+      enterprise_features = YAML.safe_load(Rails.root.join('enterprise/app/helpers/super_admin/features.yml').read)
+      
+      # Converte features enterprise para o formato base
+      enterprise_list = enterprise_features.map do |key, feature|
+        {
+          'name' => key,
+          'enabled' => true,
+          'premium' => true,
+          'enterprise' => true,
+          'description' => feature['description']
+        }
+      end
+      
+      # Combina as listas
+      base_features + enterprise_list
+    else
+      base_features
+    end.freeze
+  end
 
   FEATURES = FEATURE_LIST.each_with_object({}) do |feature, result|
     result[result.keys.size + 1] = "feature_#{feature['name']}".to_sym

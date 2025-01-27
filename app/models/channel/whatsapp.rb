@@ -25,8 +25,9 @@ class Channel::Whatsapp < ApplicationRecord
   EDITABLE_ATTRS = [:phone_number, :provider, { provider_config: {} }].freeze
 
   # default at the moment is 360dialog lets change later.
-  PROVIDERS = %w[default whatsapp_cloud].freeze
+  PROVIDERS = %w[default whatsapp_cloud whatsapp_web].freeze
   before_validation :ensure_webhook_verify_token
+  before_validation :set_default_phone_number, if: -> { provider == 'whatsapp_web' }
 
   validates :provider, inclusion: { in: PROVIDERS }
   validates :phone_number, presence: true, uniqueness: true
@@ -39,10 +40,13 @@ class Channel::Whatsapp < ApplicationRecord
   end
 
   def provider_service
-    if provider == 'whatsapp_cloud'
-      Whatsapp::Providers::WhatsappCloudService.new(whatsapp_channel: self)
-    else
+    case provider
+    when 'default'
       Whatsapp::Providers::Whatsapp360DialogService.new(whatsapp_channel: self)
+    when 'whatsapp_cloud'
+      Whatsapp::Providers::WhatsappCloudService.new(whatsapp_channel: self)
+    when 'whatsapp_web'
+      Whatsapp::Providers::WhatsappWebService.new(whatsapp_channel: self)
     end
   end
 
@@ -70,5 +74,9 @@ class Channel::Whatsapp < ApplicationRecord
 
   def validate_provider_config
     errors.add(:provider_config, 'Invalid Credentials') unless provider_service.validate_provider_config?
+  end
+
+  def set_default_phone_number
+    self.phone_number = "web_#{SecureRandom.hex(8)}" if phone_number.blank?
   end
 end

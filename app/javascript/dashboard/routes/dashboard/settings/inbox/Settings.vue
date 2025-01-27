@@ -71,6 +71,9 @@ export default {
       uiFlags: 'inboxes/getUIFlags',
       portals: 'portals/allPortals',
     }),
+    isWebhookChatwoot() {
+      return this.inbox?.webhook_url?.includes('chatwoot');
+    },
     selectedTabKey() {
       return this.tabs[this.selectedTabIndex]?.key;
     },
@@ -102,37 +105,25 @@ export default {
         },
       ];
 
-      if (this.isAWebWidgetInbox) {
-        visibleToAllChannelTabs = [
-          ...visibleToAllChannelTabs,
-          {
-            key: 'preChatForm',
-            name: this.$t('INBOX_MGMT.TABS.PRE_CHAT_FORM'),
-          },
-          {
-            key: 'widgetBuilder',
-            name: this.$t('INBOX_MGMT.TABS.WIDGET_BUILDER'),
-          },
-        ];
-      }
-
-      if (
-        this.isATwilioChannel ||
-        this.isALineChannel ||
-        this.isAPIInbox ||
-        (this.isAnEmailChannel && !this.inbox.provider) ||
-        this.isAMicrosoftInbox ||
-        this.isAGoogleInbox ||
-        this.isAWhatsAppChannel ||
-        this.isAWebWidgetInbox
-      ) {
-        visibleToAllChannelTabs = [
-          ...visibleToAllChannelTabs,
-          {
-            key: 'configuration',
-            name: this.$t('INBOX_MGMT.TABS.CONFIGURATION'),
-          },
-        ];
+      if (!this.isWebhookChatwoot) {
+        if (
+          this.isATwilioChannel ||
+          this.isALineChannel ||
+          this.isAPIInbox ||
+          (this.isAnEmailChannel && !this.inbox.provider) ||
+          this.isAMicrosoftInbox ||
+          this.isAGoogleInbox ||
+          this.isAWhatsAppChannel ||
+          this.isAWebWidgetInbox
+        ) {
+          visibleToAllChannelTabs = [
+            ...visibleToAllChannelTabs,
+            {
+              key: 'configuration',
+              name: this.$t('INBOX_MGMT.TABS.CONFIGURATION'),
+            },
+          ];
+        }
       }
 
       if (
@@ -402,6 +393,7 @@ export default {
           @on-avatar-delete="handleAvatarDelete"
         />
         <woot-input
+          v-if="!isWebhookChatwoot"
           v-model="selectedInboxName"
           class="w-3/4 pb-4"
           :class="{ error: v$.selectedInboxName.$error }"
@@ -415,7 +407,7 @@ export default {
           @blur="v$.selectedInboxName.$touch"
         />
         <woot-input
-          v-if="isAPIInbox"
+          v-if="isAPIInbox && !isWebhookChatwoot"
           v-model="webhookUrl"
           class="w-3/4 pb-4"
           :class="{ error: v$.webhookUrl.$error }"

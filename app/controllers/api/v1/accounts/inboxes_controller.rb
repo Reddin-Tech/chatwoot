@@ -1,3 +1,5 @@
+require_relative '../../../../models/channel/evolution'
+
 class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
   include Api::V1::InboxesHelper
   before_action :fetch_inbox, except: [:index, :create]
@@ -63,7 +65,7 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
   end
 
   def destroy
-    ::DeleteObjectJob.perform_later(@inbox, Current.user, request.ip) if @inbox.present?
+    ::DeleteObjectJob.perform_now(@inbox, Current.user, request.ip) if @inbox.present?
     render status: :ok, json: { message: I18n.t('messages.inbox_deletetion_response') }
   end
 
@@ -79,7 +81,7 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
   end
 
   def create_channel
-    return unless %w[web_widget api email line telegram whatsapp sms].include?(permitted_params[:channel][:type])
+    return unless %w[web_widget api email line telegram whatsapp sms evolution].include?(permitted_params[:channel][:type])
 
     account_channels_method.create!(permitted_params(channel_type_from_params::EDITABLE_ATTRS)[:channel].except(:type))
   end
@@ -145,7 +147,8 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController
       'line' => Channel::Line,
       'telegram' => Channel::Telegram,
       'whatsapp' => Channel::Whatsapp,
-      'sms' => Channel::Sms
+      'sms' => Channel::Sms,
+      'evolution' => Channel::Evolution
     }[permitted_params[:channel][:type]]
   end
 
