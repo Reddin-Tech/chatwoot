@@ -546,3 +546,5 @@
     5. Agentes sem permissões específicas: veem apenas suas conversas atribuídas
 
 **#importante** O filtro "all" agora respeita as permissões do usuário, mostrando apenas as conversas que ele tem permissão para ver
+
+- Redis testado e funcionando corretamente no container shared_redis (versão 7.4.2) na porta 6379

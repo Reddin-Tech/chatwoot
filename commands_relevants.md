@@ -73,3 +73,6 @@ tail -f log/development.log | grep "Evolution API" # Para monitorar logs de sinc
 ### Execução
 - Campanhas Live Chat são executadas automaticamente baseadas nas regras de disparo
 - Campanhas SMS são executadas no horário agendado via serviços Twilio::OneoffSmsCampaignService ou Sms::OneoffSmsCampaignService
+
+docker exec -it shared_redis redis-cli -h shared_redis info # Verificar informações do Redis
+docker exec -it shared_redis redis-cli -h shared_redis ping # Testar conexão básica com Redis
