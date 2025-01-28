@@ -32,11 +32,11 @@ RUN apk update && apk add --no-cache \
 
 # Install pnpm and configure environment
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh - \
-    && echo 'export PNPM_HOME="/root/.local/share/pnpm"' >> /root/.shrc \
-    && echo 'export PATH="$PNPM_HOME:$PATH"' >> /root/.shrc \
-    && export PNPM_HOME="/root/.local/share/pnpm" \
-    && export PATH="$PNPM_HOME:$PATH" \
-    && pnpm --version
+  && echo 'export PNPM_HOME="/root/.local/share/pnpm"' >> /root/.shrc \
+  && echo 'export PATH="$PNPM_HOME:$PATH"' >> /root/.shrc \
+  && export PNPM_HOME="/root/.local/share/pnpm" \
+  && export PATH="$PNPM_HOME:$PATH" \
+  && pnpm --version
 
 # Persist the environment variables in Docker
 ENV PNPM_HOME="/root/.local/share/pnpm"
@@ -63,6 +63,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm i
 
 COPY . /app
+COPY .env /app/.env
 
 # creating a log directory so that image wont fail when RAILS_LOG_TO_STDOUT is false
 # https://github.com/chatwoot/chatwoot/issues/701
