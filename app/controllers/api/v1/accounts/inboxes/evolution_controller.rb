@@ -11,8 +11,8 @@ module Api
           before_action :validate_evolution_params, only: [:create]
           protect_from_forgery with: :null_session
 
-          EVOLUTION_API_URL = ENV.fetch('EVOLUTION_API_URL', 'http://192.168.15.4:8080')
-          CHATWOOT_URL = ENV.fetch('CHATWOOT_URL', 'http://192.168.15.4:3000')
+          EVOLUTION_API_URL = ENV.fetch('EVOLUTION_API_URL')
+          CHATWOOT_URL = ENV.fetch('CHATWOOT_URL')
 
           def create
             Rails.logger.info('=== Detalhes da Requisição Create ===')
